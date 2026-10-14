@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#34bd40">
+  <title>Весёлая ферма</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="sprites.js" defer></script>
+  <script src="economy.js" defer></script>
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <main class="viewport" aria-label="Весёлая ферма">
+    <audio id="background-music" src="assets/Morning in the Village.mp3" loop preload="auto"></audio>
+    <div class="scenery" id="scenery" aria-hidden="true"></div>
+    <div class="weather-sky" id="weather-sky" aria-hidden="true"></div>
+    <div class="game" id="game">
+
+      <header class="topbar row">
+        <div class="title-panel panel" data-panel="wood">
+          <span class="sunflower" data-sprite="sunflower" aria-hidden="true"></span>
+          <h1>Весёлая ферма</h1>
+        </div>
+        <div class="message-panel panel" data-panel="banner">
+          <p id="game-message" aria-live="polite"></p>
+          <div id="volume-control" class="volume-control" hidden>
+            <input id="volume-slider" type="range" min="0" max="100" value="20" aria-label="Громкость музыки и звуков">
+            <output id="volume-value" for="volume-slider">20%</output>
+          </div>
+          <button id="sound-toggle" class="sound-toggle" type="button" aria-label="Настроить громкость" aria-controls="volume-control" aria-expanded="false">
+            <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+              <path class="speaker-body" d="M4 12h7l8-7v22l-8-7H4z" />
+              <path class="speaker-wave" d="M22 11c3 2 3 8 0 10m3-14c5 4 5 14 0 18" />
+              <path class="speaker-slash" d="M5 27 28 5" />
+            </svg>
+          </button>
+        </div>
+        <div class="balance-panel panel" data-panel="banner">
+          <span class="coin" data-sprite="coin" aria-hidden="true"></span>
+          <span><output id="coins">350</output> монет</span>
+        </div>
+      </header>
+
+      <section class="order-board row panel" data-panel="cream" aria-label="Листочки заказов">
+        <ol id="order-slots" class="order-slots"></ol>
+        <span class="corner-leaf left" data-sprite="leaves" aria-hidden="true"></span>
+        <span class="corner-leaf right" data-sprite="leaves" aria-hidden="true"></span>
+      </section>
+
+      <div class="dashboard row">
+        <section class="shop panel" data-panel="cream" aria-labelledby="shop-heading">
+          <span class="awning" data-sprite="awning" data-fit="stretch" aria-hidden="true"></span>
+          <div class="shop-label" data-sprite="label" data-fit="stretch" aria-hidden="true"></div>
+          <h2 id="shop-heading">МАГАЗИН</h2>
+          <div class="products shop-products" id="shop-products"></div>
+          <span class="corner-leaf left" data-sprite="leaves" aria-hidden="true"></span>
+        </section>
+        <section class="demand panel" data-panel="greenPanel" aria-labelledby="demand-heading">
+          <h2 id="demand-heading">ЗАКАЗЫ</h2>
+          <div class="products demand-products" id="demand-products" aria-label="Суммарные потребности покупателей"></div>
+        </section>
+        <div class="delivery panel" data-panel="cream">
+          <button class="delivery-button" type="button" aria-label="Сдать заказ">
+            <span data-sprite="arrow" aria-hidden="true"></span>
+          </button>
+        </div>
+        <section class="warehouse panel" data-panel="pinkPanel" aria-labelledby="warehouse-heading">
+          <h2 id="warehouse-heading">СКЛАД</h2>
+          <div class="products warehouse-products" id="warehouse-products"></div>
+          <span class="corner-leaf right" data-sprite="leaves" aria-hidden="true"></span>
+        </section>
+      </div>
+
+      <section class="farm row panel" data-panel="cream" aria-label="Территория фермы">
+        <div class="field" id="field" aria-label="Территория для размещения грядок">
+          <canvas class="field-grass" id="field-grass" aria-hidden="true"></canvas>
+          <div class="field-decorations" id="field-decorations" aria-hidden="true"></div>
+          <div class="placement-grid" id="placement-grid" aria-label="Места для новых грядок"></div>
+          <div class="beds" id="beds"></div>
+          <div class="player-decorations" id="player-decorations"></div>
+          <div class="farm-chicken" id="farm-chicken" aria-hidden="true"></div>
+          <div class="farm-eggs" id="farm-eggs"></div>
+          <div class="field-weather" id="field-weather" aria-hidden="true"></div>
+          <button class="design-store-building" id="design-store-button" type="button" aria-label="Открыть магазин ДИЗАЙН" aria-controls="design-panel" aria-expanded="false">
+            <img src="assets/design-shop.png" alt="">
+            <span>ДИЗАЙН</span>
+          </button>
+          <button class="workshop-building" id="workshop-button" type="button" aria-label="Открыть пекарню" aria-controls="workshop-panel" aria-expanded="false">
+            <img src="assets/workshop.png" alt="">
+            <span>ПЕКАРНЯ</span>
+          </button>
+        </div>
+      </section>
+      <section class="design-panel" id="design-panel" aria-labelledby="design-heading" hidden>
+        <div class="workshop-heading-row">
+          <h2 id="design-heading">ДИЗАЙН</h2>
+          <button class="workshop-close" id="design-close" type="button" aria-label="Закрыть магазин ДИЗАЙН">×</button>
+        </div>
+        <p class="workshop-intro">Выберите украшение и поставьте его на свободную траву</p>
+        <div class="design-items" id="design-items"></div>
+      </section>
+      <section class="workshop-panel" id="workshop-panel" aria-labelledby="workshop-heading" hidden>
+        <div class="workshop-heading-row">
+          <h2 id="workshop-heading">ПЕКАРНЯ</h2>
+          <button class="workshop-close" id="workshop-close" type="button" aria-label="Закрыть пекарню">×</button>
+        </div>
+        <p class="workshop-intro">Переработать урожай и сразу продать</p>
+        <div class="workshop-recipes" id="workshop-recipes"></div>
+      </section>
+      <div class="item-menu" id="item-menu" role="dialog" aria-labelledby="item-menu-heading" hidden>
+        <strong id="item-menu-heading"></strong>
+        <p id="item-menu-note"></p>
+        <button id="item-menu-move" type="button">Переставить</button>
+        <button id="item-menu-sell" type="button"></button>
+        <button id="item-menu-delete" type="button">Удалить</button>
+      </div>
+      <div class="animation-layer" id="animation-layer" aria-hidden="true"></div>
+    </div>
+    <p class="load-error" id="load-error" hidden>Не удалось загрузить графику. Файл assets/atlas.png должен находиться рядом с файлами игры в папке assets.</p>
+    <noscript>Чтобы открыть «Весёлую ферму», включите JavaScript в браузере.</noscript>
+  </main>
+</body>
+</html>
